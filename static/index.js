@@ -4,8 +4,7 @@ var container = document.getElementById( 'container' );
 
 var scene = new THREE.Scene();
 
-var camera = new THREE.OrthographicCamera( cameraRatio / - 2, cameraRatio / 2, -0.5, 0.5, 1, 3 );
-camera.position.z = 2;
+var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 10)
 scene.add( camera );
 
 var geometry = new THREE.PlaneGeometry(cameraRatio, 1);
@@ -15,22 +14,18 @@ renderer.setClearColor( 0x000000 );
 renderer.setPixelRatio( window.devicePixelRatio );
 container.appendChild( renderer.domElement );
 
+var controls = new THREE.VRControls( camera );
 var effect = new THREE.VREffect( renderer );
 // effect.scale = 0; // video doesn't need eye separation
 
+if ( WEBVR.isAvailable() ) {
+	document.body.appendChild( WEBVR.getButton( effect ) );
+} else {
+	document.body.appendChild( WEBVR.getMessage() );
+}
+
 function onWindowResize() {
-	var aspectRatio = window.innerWidth / window.innerHeight;
-	if (aspectRatio > cameraRatio) {
-		camera.top = -0.5;
-		camera.bottom = 0.5;
-		camera.left = -aspectRatio / 2;
-		camera.right = aspectRatio / 2;
-	} else {
-		camera.top = -0.5 / aspectRatio * cameraRatio;
-		camera.bottom = 0.5 / aspectRatio * cameraRatio;
-		camera.left = -cameraRatio / 2;
-		camera.right = cameraRatio / 2;
-	}
+	camera.aspect = window.innerWidth / window.innerHeight;
 	camera.updateProjectionMatrix();
 
 	effect.setSize( window.innerWidth, window.innerHeight );
@@ -42,6 +37,7 @@ onWindowResize();
 function animate() {
 	effect.requestAnimationFrame( animate );
 
+	controls.update();
 	effect.render( scene, camera );
 }
 
@@ -63,8 +59,8 @@ pc.onaddstream = function(event) {
 	texture.generateMipmaps = false;
 
 	var material = new THREE.MeshBasicMaterial( { map: texture } );
-	var mesh = new THREE.Mesh( geometry, material );
-	mesh.rotateX(Math.PI);
+	mesh = new THREE.Mesh( geometry, material );
+	mesh.position.z = -2;
 	scene.add( mesh );
 
 	animate();
