@@ -27,13 +27,51 @@ app.get('/', function(req, res) {
 
 app.use(express.static('static'));
 
-io.on('connection', function(socket) {
-	socket.on('message', function() {
+var cameraSocket = null;
 
+io.on('connection', function(socket) {
+	socket.on('create', function() {
+		if (cameraSocket) return;
+
+		cameraSocket = socket;
+
+		socket.on('disconnect', function() {
+			cameraSocket = null;
+		});
+
+		function forward(name) {
+			socket.on(name, function(id) {
+				var socket = io.sockets.connected[id];
+				if (socket) {
+					arguments[0] = name;
+					socket.emit.apply(socket, arguments);
+				}
+			});
+		}
+
+		forward('candidate');
+		forward('offer');
 	});
 
-	socket.on('disconnect', function() {
+	socket.on('join', function() {
+		if (cameraSocket) {
+			cameraSocket.emit('join', socket.id);
+		} else {
+			socket.emit('no camera');
+		}
 
+		function forward(name) {
+			socket.on(name, function() {
+				if (cameraSocket) {
+					Array.prototype.unshift.call(arguments, socket.id);
+					Array.prototype.unshift.call(arguments, name);
+					cameraSocket.emit.apply(cameraSocket, arguments);
+				}
+			});
+		}
+
+		forward('answer');
+		forward('candidate');
 	});
 });
 

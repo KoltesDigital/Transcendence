@@ -1,0 +1,10 @@
+{
+	"browser": true,
+	"eqeqeq": true,
+	"globals": {
+		"io": false,
+		"RTCMultiConnection": false
+	},
+	"undef": true,
+	"unused": true
+}
