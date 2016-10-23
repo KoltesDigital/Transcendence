@@ -1,13 +1,20 @@
 'use strict';
-var a;
+
 var bunyan = require('bunyan');
 var config = require('config-path')();
 var express = require('express');
+var fs = require('fs');
 var http = require('http');
+var https = require('https');
 var Server = require('socket.io');
 
 var app = express();
-var server = http.Server(app);
+var server = config.https ?
+	https.createServer({
+		cert: fs.readFileSync(config.https.cert),
+		key: fs.readFileSync(config.https.key),
+	}, app) :
+	http.createServer(app);
 var io = new Server(server);
 
 var logger = bunyan.createLogger({
