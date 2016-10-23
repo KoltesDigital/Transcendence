@@ -1,5 +1,5 @@
 'use strict';
-
+var a;
 var bunyan = require('bunyan');
 var config = require('config-path')();
 var express = require('express');

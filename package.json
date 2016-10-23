@@ -2,7 +2,7 @@
   "name": "transcendence",
   "version": "1.0.0",
   "license": "MIT",
-  "main": "./server.js",
+  "main": "./src/server.js",
   "dependencies": {
     "bunyan": "^1.8.3",
     "config-path": "^2.1.0",

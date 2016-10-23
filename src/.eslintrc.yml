@@ -1,0 +1,10 @@
+env:
+  node: true
+extends: 'eslint:recommended'
+rules:
+  indent:
+    - error
+    - tab
+  semi:
+    - error
+    - always
