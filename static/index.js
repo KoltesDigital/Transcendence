@@ -45,6 +45,10 @@ function animate() {
 	effect.render( scene, camera );
 }
 
+document.body.addEventListener('click', function(){
+	effect.setFullScreen( true );
+});
+
 var pc = new RTCPeerConnection(pcConfig);
 
 pc.onaddstream = function(event) {
@@ -59,7 +63,7 @@ pc.onaddstream = function(event) {
 	texture.generateMipmaps = false;
 
 	var material = new THREE.MeshBasicMaterial( { map: texture } );
-	mesh = new THREE.Mesh( geometry, material );
+	var mesh = new THREE.Mesh( geometry, material );
 	mesh.rotateX(Math.PI);
 	scene.add( mesh );
 
